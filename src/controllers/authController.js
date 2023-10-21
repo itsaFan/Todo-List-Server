@@ -7,7 +7,6 @@ const cache = require("memory-cache");
 const { generateLoginTokens, generateAccessToken } = require("../auth/token-generator");
 const { handleFailedAttempt, FAILED_ATTEMPTS_LIMIT } = require("../utils/limit-handlers");
 
-
 const register = async (req, res) => {
   const { username, email, password } = req.body;
 
@@ -70,7 +69,7 @@ const login = async (req, res) => {
     cache.del(cacheKey);
 
     const { accessToken, refreshToken } = generateLoginTokens(user);
-    res.cookie("steffToken", refreshToken, { httpOnly: true, secure: false, maxAge: 7 * 24 * 60 * 60 * 1000 });
+    res.cookie("steffToken", refreshToken, { httpOnly: true, secure: true, sameSite: "None", maxAge: 7 * 24 * 60 * 60 * 1000 });
     return res.json({ accessToken });
   } catch (error) {
     console.error("Internal server error:", error);
