@@ -6,13 +6,13 @@ const createTodo = async (req, res) => {
   const userId = req.userPayload.userId;
 
   try {
-    if (!title || !description) {
-      return res.status(400).json({ message: "Title and description are required" });
+    if (!title) {
+      return res.status(400).json({ message: "Title are required" });
     }
 
     const todo = await todoDao.createTodo({
       title,
-      description,
+      description: description || "",
       createdBy: userId,
     });
 
