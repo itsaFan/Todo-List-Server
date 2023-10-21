@@ -1,0 +1,371 @@
+openapi: 3.0.0
+info:
+  title: Steffan-Week16-API-Docs
+  version: 1.0.0
+  description: Steffansim, Week 16 RevoU Assignment - API Documentation
+servers:
+  - url: https://todo-server-production-e6c4.up.railway.app
+    description: Production or Deployment Server
+  - url: http://localhost:3000
+    description: Development Server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: "Bearer with JWT Token"
+  schemas:
+    User:
+      type: object
+      required:
+        - username
+        - email
+        - password
+      properties:
+        username:
+          type: string
+          description: Unique username of the user
+        email:
+          type: string
+          format: email
+          description: Unique email address of the user
+        password:
+          type: string
+          format: password
+          minLength: 8
+          description: Password of the user
+        role:
+          type: string
+          description: Role ID referencing Permission
+        resetPasswordToken:
+          type: string
+          description: Token generated when user requests a password reset
+        resetPasswordExpires:
+          type: string
+          format: date-time
+          description: Expiration time for the password reset token
+    Todo:
+      type: object
+      required:
+        - title
+        - description
+        - createdBy
+      properties:
+        title:
+          type: string
+          description: The title of the todo.
+        description:
+          type: string
+          description: A description for the todo.
+        createdBy:
+          type: string
+          description: ID of the user who created the todo.
+    Permission:
+      type: object
+      properties:
+        role:
+          type: string
+          enum:
+            - ROLE_USER
+            - ROLE_ADMIN
+          description: Role associated with the permission.
+paths:
+  /api/register:
+    post:
+      tags:
+        - Authentication
+      summary: Register a new user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - email
+                - password
+              properties:
+                username:
+                  type: string
+                  description: Username
+                email:
+                  type: string
+                  description: Email
+                password:
+                  type: string
+      responses:
+        201:
+          description: User registered successfully
+        400:
+          description: Password validation failed or other bad request
+        403:
+          description: Username already taken
+        404:
+          description: Role not found
+        500:
+          description: Internal server error
+
+  /api/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - identifier
+                - password
+              properties:
+                identifier:
+                  type: string
+                  description: Email or username
+                password:
+                  type: string
+      responses:
+        200:
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  accessToken:
+                    type: string
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                description: HttpOnly cookie containing the refreshToken
+        400:
+          description: Required data not provided or other bad request
+        401:
+          description: Unauthorized
+        429:
+          description: Too many failed attempts
+        500:
+          description: Internal server error
+
+  /api/request-reset-password:
+    post:
+      tags:
+        - Authentication
+      summary: Request password reset
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        200:
+          description: Password reset link sent to email
+        404:
+          description: Email not found
+        500:
+          description: Internal server error
+
+  /api/reset-password:
+    post:
+      tags:
+        - Authentication
+      summary: Reset password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - token
+                - newPassword
+              properties:
+                token:
+                  type: string
+                newPassword:
+                  type: string
+      responses:
+        200:
+          description: Password successfully reset
+        400:
+          description: Invalid or expired token or password validation failed
+        500:
+          description: Internal server error
+
+  /api/logout:
+    post:
+      tags:
+        - Authentication
+      summary: Logout user
+      responses:
+        200:
+          description: Logged out successfully
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                description: Clears the refreshToken from the client's cookies
+        500:
+          description: Internal server error
+
+  /api/refresh:
+    post:
+      tags:
+        - Authentication
+      summary: Refresh access token using the steffToken from cookies.
+      parameters:
+        - name: steffToken
+          in: cookie
+          description: refreshToken used to generate a new accessToken.
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Success generating new access token
+          content:
+            application/json:
+              schema:
+               type: object
+               properties:
+                 accessToken:
+                  type: string
+                  description: New Access Token
+        500:
+          description: Internal server error
+
+  /api/todo/add:
+    post:
+      tags:
+        - Todo
+      summary: Add a new todo
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+      responses:
+        201:
+          description: Todo created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Todo"
+        400:
+          description: Required data not provided or other bad request
+        500:
+          description: Internal server error
+
+  /api/todo/me:
+    get:
+      tags:
+        - Todo
+      summary: Retrieve todos created by the authenticated user
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: List of todos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Todo"
+        500:
+          description: Internal server error
+
+  /api/todo/all:
+    get:
+      tags:
+        - Todo
+      summary: Retrieve all todos (Admin only)
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: List of all todos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Todo"
+        500:
+          description: Internal server error
+
+  /api/todo/delete/{todoId}:
+    delete:
+      tags:
+        - Todo
+      summary: Delete a todo by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: todoId
+          required: true
+          schema:
+            type: string
+          description: ID of the todo to be deleted
+      responses:
+        200:
+          description: Todo deleted successfully
+        403:
+          description: Forbidden - Not the creator or not an admin
+        404:
+          description: Todo not found
+        500:
+          description: Internal server error
+
+  /api/todo/edit/{todoId}:
+    put:
+      tags:
+        - Todo
+      summary: Edit a todo by ID
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: todoId
+          required: true
+          schema:
+            type: string
+          description: ID of the todo to be edited
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+      responses:
+        200:
+          description: Todo updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Todo"
+        403:
+          description: Forbidden - Not the creator or not an admin
+        404:
+          description: Todo not found
+        500:
+          description: Internal server error
