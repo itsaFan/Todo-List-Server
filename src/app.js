@@ -1,10 +1,10 @@
 const express = require("express");
 const config = require("./config/config");
 const cookieParser = require("cookie-parser");
-const { applyCors } = require("./middlewares");
+const { applyCors, applyHelmet } = require("./middlewares");
 const dbConnection = require("./config/db-config");
 const authRoutes = require("./routes/authRoutes");
-const userRoutes = require("./routes/todoRoutes");
+const todoRoutes = require("./routes/todoRoutes");
 const YAML = require("yamljs");
 const OpenApiValidator = require("express-openapi-validator");
 const swaggerUi = require("swagger-ui-express");
@@ -12,6 +12,7 @@ const swaggerUi = require("swagger-ui-express");
 //setup
 const app = express();
 applyCors(app);
+applyHelmet(app);
 app.use(cookieParser());
 app.use(express.json());
 dbConnection();
@@ -27,7 +28,7 @@ app.use(
 );
 
 app.use("/api", authRoutes);
-app.use("/api/todo", userRoutes);
+app.use("/api/todo", todoRoutes);
 
 //Open-api error handling
 app.use((err, req, res, next) => {
@@ -38,5 +39,3 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(config.port, () => console.log(`Server is running on http://localhost:${config.port}`));
-
-
