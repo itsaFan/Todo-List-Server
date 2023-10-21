@@ -2,7 +2,7 @@ const config = require("../config/config");
 const cors = require("cors");
 
 const setCors = (req, callback) => {
-  const allowedUrl = [config.mainUrl];
+  const allowedUrl = [config.mainUrl, config.devUrl];
   let corsOptions;
 
   if (allowedUrl.includes(req.header("Origin"))) {
