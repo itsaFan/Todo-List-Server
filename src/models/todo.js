@@ -8,6 +8,9 @@ const todoSchema = new mongoose.Schema({
   description: {
     type: String,
   },
+  deadline: {
+    type: Date,
+  },
   createdOn: {
     type: Date,
     default: Date.now,

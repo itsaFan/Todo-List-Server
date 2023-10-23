@@ -1,9 +1,8 @@
 const { todoDao } = require("../dao");
 const { findTodo } = require("../dao/todoDao");
-const Todo = require("../models/todo");
 
 const createTodo = async (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, deadline } = req.body;
 
   const userId = req.userPayload.userId;
 
@@ -12,12 +11,17 @@ const createTodo = async (req, res) => {
       return res.status(400).json({ message: "Title are required" });
     }
 
-    const todo = await todoDao.createTodo({
+    const todoData = {
       title,
       description: description || "",
       createdBy: userId,
-    });
+    };
 
+    if (deadline) {
+      todoData.deadline = deadline;
+    }
+
+    const todo = await todoDao.createTodo(todoData);
     res.status(201).json({ message: "Todo created successfully", todo: todo });
   } catch (error) {
     console.error("Internal server error:", error);
