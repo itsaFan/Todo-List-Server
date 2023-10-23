@@ -8,7 +8,11 @@ const todoSchema = new mongoose.Schema({
   description: {
     type: String,
   },
-
+  createdOn: {
+    type: Date,
+    default: Date.now,
+    required: true,
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -18,8 +22,6 @@ const todoSchema = new mongoose.Schema({
 
 const Todo = mongoose.model("Todo", todoSchema);
 module.exports = Todo;
-
-
 
 // priority: {
 //   type: String,
