@@ -1,4 +1,6 @@
 const { todoDao } = require("../dao");
+const { findTodo } = require("../dao/todoDao");
+const Todo = require("../models/todo");
 
 const createTodo = async (req, res) => {
   const { title, description } = req.body;
@@ -93,10 +95,30 @@ const editTodo = async (req, res) => {
   }
 };
 
+const searchTodos = async (req, res) => {
+  const query = req.query.q;
+  const userRole = req.userPayload.role;
+  const userId = req.userPayload.userId;
+
+  try {
+    const todos = await findTodo(query, userRole, userId);
+
+    if (!todos) {
+      return res.status(404).json({ message: "Todos not found" });
+    }
+
+    return res.status(200).json({ message: "search result:", todos });
+  } catch (error) {
+    console.error("Internal server error:", error);
+    return res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
 module.exports = {
   createTodo,
   viewTodoCreatedBy,
   viewAllTodos,
   deleteTodo,
   editTodo,
+  searchTodos,
 };

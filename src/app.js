@@ -18,24 +18,24 @@ app.use(express.json());
 dbConnection();
 
 //Swagger Config
-const swaggerDocument = YAML.load("./src/doc/openapi.yaml");
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.use(
-  OpenApiValidator.middleware({
-    apiSpec: "./src/doc/openapi.yaml",
-    validateRequests: true,
-  })
-);
+// const swaggerDocument = YAML.load("./src/doc/openapi.yaml");
+// app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+// app.use(
+//   OpenApiValidator.middleware({
+//     apiSpec: "./src/doc/openapi.yaml",
+//     validateRequests: true,
+//   })
+// );
 
 app.use("/api", authRoutes);
 app.use("/api/todo", todoRoutes);
 
 //Open-api error handling
-app.use((err, req, res, next) => {
-  res.status(err.status || 500).json({
-    message: err.message,
-    errors: err.errors,
-  });
-});
+// app.use((err, req, res, next) => {
+//   res.status(err.status || 500).json({
+//     message: err.message,
+//     errors: err.errors,
+//   });
+// });
 
 app.listen(config.port, () => console.log(`Server is running on http://localhost:${config.port}`));
