@@ -36,8 +36,17 @@ const updateTodo = async (todoId, newTodoData) => {
       updates.description = newTodoData.description;
     }
 
+    if (newTodoData.priority) {
+      updates.priority = newTodoData.priority;
+    }
+
+    if (newTodoData.deadline) {
+      updates.deadline = newTodoData.deadline;
+    }
+
     const result = await Todo.findOneAndUpdate(filter, updates, {
       new: true,
+      runValidators: true,
     });
 
     if (!result) {
@@ -60,7 +69,6 @@ const findTodo = async (query, userRole, userId) => {
       return await Todo.find({
         $or: [{ title: new RegExp(query, "i") }, { createdBy: { $in: userIds } }],
       }).populate("createdBy", "_id username email");
-      
     } else if (userRole === "ROLE_USER") {
       return await Todo.find({
         $and: [{ title: new RegExp(query, "i") }, { createdBy: userId }],

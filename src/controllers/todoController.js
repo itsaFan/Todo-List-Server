@@ -2,7 +2,7 @@ const { todoDao } = require("../dao");
 const { findTodo } = require("../dao/todoDao");
 
 const createTodo = async (req, res) => {
-  const { title, description, deadline } = req.body;
+  const { title, description, deadline, priority } = req.body;
 
   const userId = req.userPayload.userId;
 
@@ -14,6 +14,7 @@ const createTodo = async (req, res) => {
     const todoData = {
       title,
       description: description || "",
+      priority,
       createdBy: userId,
     };
 

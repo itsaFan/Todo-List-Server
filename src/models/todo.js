@@ -8,6 +8,11 @@ const todoSchema = new mongoose.Schema({
   description: {
     type: String,
   },
+  priority: {
+    type: String,
+    enum: ["low", "medium", "high", "notSet"],
+    default: "notSet",
+  },
   deadline: {
     type: Date,
   },
