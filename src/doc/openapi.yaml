@@ -272,10 +272,10 @@ paths:
               properties:
                 title:
                   type: string
-                  example: Create a button
+                  example: Write your todo/task
                 description:
                   type: string
-                  example: description(optional)
+                  example: this is optional, either input or remove it
                 priority:
                   type: string
                   enum:
@@ -283,10 +283,11 @@ paths:
                     - medium
                     - high
                     - notSet
-                  example: low/medium/high/notSet
+                  example: low/medium/high - this is optional, either input or remove it
                 deadline:
                   type: string
                   format: date-time
+                  example: yyyy-mm-dd time, -  this is optional, either input or remove it
 
       responses:
         201:
@@ -410,10 +411,10 @@ paths:
               properties:
                 title:
                   type: string
-                  example: Create a button
+                  example: Edit your todo
                 description:
                   type: string
-                  example: description(optional)
+                  example: edit description - this is optional, either input or remove it
                 priority:
                   type: string
                   enum:
@@ -421,10 +422,11 @@ paths:
                     - medium
                     - high
                     - notSet
-                  example: low/medium/high/notSet
+                  example: edit to low/medium/high - this is optional, either input or remove it
                 deadline:
                   type: string
                   format: date-time
+                  example: edit yyyy-mm-dd - this is optional, either input or remove it
       responses:
         200:
           description: Todo updated successfully
