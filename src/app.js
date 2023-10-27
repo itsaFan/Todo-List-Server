@@ -8,6 +8,8 @@ const todoRoutes = require("./routes/todoRoutes");
 const YAML = require("yamljs");
 const OpenApiValidator = require("express-openapi-validator");
 const swaggerUi = require("swagger-ui-express");
+const escapeHtml = require("escape-html");
+
 
 //setup
 const app = express();
@@ -17,6 +19,13 @@ app.use(cookieParser());
 app.use(express.json());
 dbConnection();
 
+app.get("/security-test", (req, res) => {
+  const name = req.query.name ? escapeHtml(req.query.name) : "Guest";
+  res.send(`
+      <h1>Hello ${name}</h1><br />
+      <p> Security Test</p>
+     `);
+});
 //Swagger Config
 // const swaggerDocument = YAML.load("./src/doc/openapi.yaml");
 // app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
