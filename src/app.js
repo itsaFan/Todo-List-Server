@@ -19,6 +19,13 @@ app.use(cookieParser());
 app.use(express.json());
 dbConnection();
 
+app.get("/api/security-test", (req, res) => {
+  const name = req.query.name ? escapeHtml(req.query.name) : "Guest";
+  res.send(`
+      <h1>Hello ${name}</h1><br />
+      <p> Security Test</p>
+     `);
+});
 //Swagger Config
 // const swaggerDocument = YAML.load("./src/doc/openapi.yaml");
 // app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
