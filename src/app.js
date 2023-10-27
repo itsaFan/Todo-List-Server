@@ -19,7 +19,7 @@ app.use(cookieParser());
 app.use(express.json());
 dbConnection();
 
-app.get("/security-test", (req, res) => {
+app.get("/api/security-test", (req, res) => {
   const name = req.query.name ? escapeHtml(req.query.name) : "Guest";
   res.send(`
       <h1>Hello ${name}</h1><br />
