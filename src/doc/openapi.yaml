@@ -4,12 +4,12 @@ info:
   version: 1.2.0
   description: Steffansim, Week 18 Todo Server - API Documentation
 servers:
-  - url: https://us-central1-personal-d9ef9.cloudfunctions.net/todo_server_steffansim
-    description: Main Production Server
   - url: https://todo-list-server-production-6c12.up.railway.app
-    description: Second Production Server
+    description: Main Production Server
   - url: http://localhost:3000
     description: Development Server
+  - url: https://us-central1-personal-d9ef9.cloudfunctions.net/todo_server_steffansim
+    description: Second Production Server(CORS NOT SET)
 components:
   securitySchemes:
     bearerAuth:
