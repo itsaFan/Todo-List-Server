@@ -1,6 +1,9 @@
+
+
+
 const setPermissionPolicy = (req, res, next) => {
   const permission = "camera=(), microphone=(), geolocation=()";
-  res.setHeader("Permission-Policy", permission);
+  res.setHeader("Permissions-Policy", permission);
   next();
 };
 
