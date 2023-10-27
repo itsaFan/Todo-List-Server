@@ -5,7 +5,9 @@ info:
   description: Steffansim, Week 16 RevoU Assignment - API Documentation
 servers:
   - url: https://us-central1-personal-d9ef9.cloudfunctions.net/todo_server_steffansim
-    description: Production or Deployment Server
+    description: Main Production Server
+  - url: https://todo-list-server-production-6c12.up.railway.app
+    description: Second Production Server
   - url: http://localhost:3000
     description: Development Server
 components:
